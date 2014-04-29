@@ -12,13 +12,9 @@
     //ini the model
     $scope.model.value = $scope.model.value || getDefaultModel($scope.model.config);
 
-    //ini the render model
-    $scope.archetypeRenderModel = {};
-    initArchetypeRenderModel();
-
     //helper to get $eval the labelTemplate
     $scope.getFieldsetTitle = function(fieldsetConfigModel, fieldsetIndex) {
-        var fieldset = $scope.archetypeRenderModel.fieldsets[fieldsetIndex];
+        var fieldset = $scope.model.value.fieldsets[fieldsetIndex];
         var fieldsetConfig = $scope.getConfigFieldsetByAlias(fieldset.alias);
         var template = fieldsetConfigModel.labelTemplate;
 
@@ -61,11 +57,11 @@
 
                 if (typeof $index != 'undefined')
                 {
-                    $scope.archetypeRenderModel.fieldsets.splice($index + 1, 0, newFieldset);
+                    $scope.model.value.fieldsets.splice($index + 1, 0, newFieldset);
                 }
                 else
                 {
-                    $scope.archetypeRenderModel.fieldsets.push(newFieldset);
+                    $scope.model.value.fieldsets.push(newFieldset);
                 }
             }
 
@@ -78,11 +74,11 @@
     $scope.removeRow = function ($index) {
         if ($scope.canRemove()) {
             if (confirm('Are you sure you want to remove this?')) {
-                $scope.archetypeRenderModel.fieldsets[$index].remove = true;
+                $scope.model.value.fieldsets[$index].remove = true;
                 /*
                     Touches the model.  Not sure why this is needed but without it the Digest doesn't run on a remove row.
                 */
-                $scope.archetypeRenderModel = JSON.parse(JSON.stringify($scope.archetypeRenderModel));
+                $scope.model.value = JSON.parse(JSON.stringify($scope.model.value));
             }
         }
     }
@@ -117,18 +113,6 @@
             && countVisible() === 0;
     }
 
-    //helper, ini the render model from the server (model.value)
-    function initArchetypeRenderModel() {
-        $scope.archetypeRenderModel = removeNulls($scope.model.value);
-
-        _.each($scope.archetypeRenderModel.fieldsets, function (fieldset)
-        {
-            fieldset.remove = false;
-            fieldset.collapse = false;
-            fieldset.isValid = true;
-        });
-    }
-
     //helper to get the correct fieldset from config
     $scope.getConfigFieldsetByAlias = function(alias) {
         return _.find($scope.model.config.fieldsets, function(fieldset){
@@ -159,13 +143,13 @@
             iniState = fieldset.collapse;
         }
 
-        _.each($scope.archetypeRenderModel.fieldsets, function(fieldset){
+        _.each($scope.model.value.fieldsets, function(fieldset){
             fieldset.collapse = true;
         });
 
-        if(!fieldset && $scope.archetypeRenderModel.fieldsets.length == 1 && $scope.archetypeRenderModel.fieldsets[0].remove == false)
+        if(!fieldset && $scope.model.value.fieldsets.length == 1 && $scope.model.value.fieldsets[0].remove == false)
         {
-            $scope.archetypeRenderModel.fieldsets[0].collapse = false;
+            $scope.model.value.fieldsets[0].collapse = false;
             return;
         }
 
@@ -179,30 +163,19 @@
     $scope.focusFieldset();
 
     //developerMode helpers
-    $scope.archetypeRenderModel.toString = stringify;
+    $scope.model.value.toString = stringify;
 
     //encapsulate stringify (should be built into browsers, not sure of IE support)
     function stringify() {
         return JSON.stringify(this);
     }
 
-    //watch for changes
-    $scope.$watch('archetypeRenderModel', function (v) {
-        if ($scope.model.config.developerMode) {
-            console.log(v);
-            if (typeof v === 'string') {
-                $scope.archetypeRenderModel = JSON.parse(v);
-                $scope.archetypeRenderModel.toString = stringify;
-            }
-        }
-    });
-
     //helper to count what is visible
     function countVisible()
     {
         var count = 0;
 
-        _.each($scope.archetypeRenderModel.fieldsets, function(fieldset){
+        _.each($scope.model.value.fieldsets, function(fieldset){
             if (fieldset.remove == false) {
                 count++;
             }
@@ -216,48 +189,13 @@
     {
         $scope.model.value = { fieldsets: [] };
 
-        _.each($scope.archetypeRenderModel.fieldsets, function(fieldset){
+        _.each($scope.model.value.fieldsets, function(fieldset){
             var cleanedFieldset =  cleanFieldset(fieldset);
 
             if(cleanedFieldset){
                 $scope.model.value.fieldsets.push(cleanedFieldset);
             }
         });
-    }
-
-    //helper to remove properties only used during editing that we don't want in the saved data
-    //also removes properties that are no longer in the config
-    function cleanFieldset(fieldset)
-    {
-        if (typeof fieldset != 'function' && !fieldset.remove){
-
-            var fieldsetConfig = $scope.getConfigFieldsetByAlias(fieldset.alias);
-
-            //clone and clean
-            var tempFieldset = JSON.parse(JSON.stringify(fieldset));
-            delete tempFieldset.remove;
-            delete tempFieldset.isValid;
-            delete tempFieldset.collapse;
-
-            _.each(tempFieldset.properties, function(property, index){
-                var propertyConfig = _.find(fieldsetConfig.properties, function(p){
-                    return property.alias == p.alias;
-                });
-
-                //just prune the property
-                if(propertyConfig){
-                    delete property.isValid;
-                }
-                else
-                {
-                    //need to remove the whole property
-                    tempFieldset.properties.splice(index, 1);
-                }
-
-            });
-
-            return tempFieldset;
-        }
     }
 
     // helper to get initial model if none was provided
@@ -300,9 +238,9 @@
     //helper to lookup validity when given a fieldsetIndex and property alias
     $scope.getPropertyValidity = function(fieldsetIndex, alias)
     {
-        if($scope.archetypeRenderModel.fieldsets[fieldsetIndex])
+        if($scope.model.value.fieldsets[fieldsetIndex])
         {
-            var property = _.find($scope.archetypeRenderModel.fieldsets[fieldsetIndex].properties, function(property){
+            var property = _.find($scope.model.value.fieldsets[fieldsetIndex].properties, function(property){
                 return property.alias == alias;
             });
         }
@@ -323,7 +261,7 @@
         }
         else
         {
-            syncModelToRenderModel();
+            // syncModelToRenderModel();
         }
     });
 
