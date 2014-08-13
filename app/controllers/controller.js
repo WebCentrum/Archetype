@@ -17,58 +17,9 @@
 
     init();
 
-    //helper to get $eval the labelTemplate
-    $scope.getFieldsetTitle = function(fieldsetConfigModel, fieldsetIndex) {
-        if(!fieldsetConfigModel)
-            return "";
-        var fieldset = $scope.model.value.fieldsets[fieldsetIndex];
-        var fieldsetConfig = $scope.getConfigFieldsetByAlias(fieldset.alias);
-        var template = fieldsetConfigModel.labelTemplate;
-
-        if (template.length < 1)
-            return fieldsetConfig.label;
-
-        var rgx = /{{(.*?)}}*/g;
-        var results;
-        var parsedTemplate = template;
-
-        while ((results = rgx.exec(template)) !== null) {
-            var propertyAlias = "";
-
-            //test for function
-            var beginIndexOf = results[1].indexOf("(");
-            var endIndexOf = results[1].indexOf(")");
-
-            if(beginIndexOf != -1 && endIndexOf != -1)
-            {
-                var functionName = results[1].substring(0, beginIndexOf);
-                propertyAlias = results[1].substring(beginIndexOf + 1, endIndexOf);
-                parsedTemplate = parsedTemplate.replace(results[0], executeFunctionByName(functionName, window, $scope, entityResource, $scope.getPropertyValueByAlias(fieldset, propertyAlias)));
-            }
-            else {
-                propertyAlias = results[1];
-                parsedTemplate = parsedTemplate.replace(results[0], $scope.getPropertyValueByAlias(fieldset, propertyAlias));
-            }
-        }
-
-        return parsedTemplate;
-    };
-
-    function executeFunctionByName(functionName, context) {
-        var args = Array.prototype.slice.call(arguments).splice(2);
-
-        var namespaces = functionName.split(".");
-        var func = namespaces.pop();
-
-        for(var i = 0; i < namespaces.length; i++) {
-            context = context[namespaces[i]];
-        }
-
-        if(context && context[func]) {
-            return context[func].apply(this, args);
-        }
-
-        return "";
+    //setup resource/services for label helper
+    $scope.resources = {
+        entityResource: entityResource
     }
 
     //sort config
