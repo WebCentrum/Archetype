@@ -15,7 +15,7 @@ namespace Archetype.Extensions
 
         private static readonly ArchetypeHelper _instance = new ArchetypeHelper();
 
-        internal static ArchetypeHelper Instance { get { return _instance; } }
+        public static ArchetypeHelper Instance { get { return _instance; } }
 
         internal ArchetypeHelper()
         {
@@ -50,7 +50,7 @@ namespace Archetype.Extensions
             }
         }
 
-        internal ArchetypeModel DeserializeJsonToArchetype(string sourceJson, int dataTypeId, PublishedContentType hostContentType = null)
+        public ArchetypeModel DeserializeJsonToArchetype(string sourceJson, int dataTypeId, PublishedContentType hostContentType = null)
         {
             try
             {
