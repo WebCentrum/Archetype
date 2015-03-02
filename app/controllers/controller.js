@@ -38,22 +38,33 @@
         var parsedTemplate = template;
 
         while ((results = rgx.exec(template)) !== null) {
-            var propertyAlias = "";
+            // split the template in case it consists of multiple property aliases and/or functions
+            var parts = results[1].split("|");
+            var templateLabelValue = "";
+            for(var i = 0; i < parts.length; i++) {
+                // stop looking for a template label value if a previous template part already yielded a value
+                if(templateLabelValue != "") {
+                    break;
+                }
+                
+                var part = parts[i];
+                
+                //test for function
+                var beginIndexOf = part.indexOf("(");
+                var endIndexOf = part.indexOf(")");
 
-            //test for function
-            var beginIndexOf = results[1].indexOf("(");
-            var endIndexOf = results[1].indexOf(")");
-
-            if(beginIndexOf != -1 && endIndexOf != -1)
-            {
-                var functionName = results[1].substring(0, beginIndexOf);
-                propertyAlias = results[1].substring(beginIndexOf + 1, endIndexOf);
-                parsedTemplate = parsedTemplate.replace(results[0], executeFunctionByName(functionName, window, $scope.getPropertyValueByAlias(fieldset, propertyAlias), $scope));
+                if(beginIndexOf != -1 && endIndexOf != -1)
+                {
+                    var functionName = part.substring(0, beginIndexOf);
+                    var propertyAlias = part.substring(beginIndexOf + 1, endIndexOf);
+                    templateLabelValue = executeFunctionByName(functionName, window, $scope.getPropertyValueByAlias(fieldset, propertyAlias), $scope);
+                }
+                else {
+                    propertyAlias = part;
+                    templateLabelValue = $scope.getPropertyValueByAlias(fieldset, propertyAlias);
+                }                
             }
-            else {
-                propertyAlias = results[1];
-                parsedTemplate = parsedTemplate.replace(results[0], $scope.getPropertyValueByAlias(fieldset, propertyAlias));
-            }
+            parsedTemplate = parsedTemplate.replace(results[0], templateLabelValue);
         }
 
         return parsedTemplate;
@@ -92,10 +103,8 @@
 
     //handles a fieldset add
     $scope.addRow = function (fieldsetAlias, $index) {
-        if ($scope.canAdd())
-        {
-            if ($scope.model.config.fieldsets)
-            {
+        if ($scope.canAdd()) {
+            if ($scope.model.config.fieldsets) {
                 var newFieldset = getEmptyRenderFieldset($scope.getConfigFieldsetByAlias(fieldsetAlias));
 
                 if (typeof $index != 'undefined')
@@ -131,6 +140,22 @@
         }
     }
 
+    $scope.cloneRow = function ($index) {
+        if ($scope.canClone() && typeof $index != 'undefined') {
+            var newFieldset = angular.copy($scope.model.value.fieldsets[$index]);
+
+            if(newFieldset) {
+
+                $scope.model.value.fieldsets.splice($index + 1, 0, newFieldset);
+
+                $scope.setDirty();
+
+                newFieldset.collapse = $scope.model.config.enableCollapsing ? true : false;
+                $scope.focusFieldset(newFieldset);
+            }
+        }
+    }
+
     $scope.enableDisable = function (fieldset) {
         fieldset.disabled = !fieldset.disabled;
         // explicitly set the form as dirty when manipulating the enabled/disabled state of a fieldset
@@ -138,8 +163,7 @@
     }
 
     //helpers for determining if a user can do something
-    $scope.canAdd = function ()
-    {
+    $scope.canAdd = function () {
         if ($scope.model.config.maxFieldsets)
         {
             return countVisible() < $scope.model.config.maxFieldsets;
@@ -149,11 +173,24 @@
     }
 
     //helper that returns if an item can be removed
-    $scope.canRemove = function ()
-    {
+    $scope.canRemove = function () {
         return countVisible() > 1 
             || ($scope.model.config.maxFieldsets == 1 && $scope.model.config.fieldsets.length > 1)
             || $scope.model.config.startWithAddButton;
+    }
+
+    $scope.canClone = function () {
+
+        if (!$scope.model.config.enableCloning) {
+            return false;
+        }
+
+        if ($scope.model.config.maxFieldsets)
+        {
+            return countVisible() < $scope.model.config.maxFieldsets;
+        }
+
+        return true;
     }
 
     //helper that returns if an item can be sorted
