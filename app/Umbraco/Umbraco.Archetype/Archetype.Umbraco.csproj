@@ -253,6 +253,10 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>call robocopy $(TargetDir) $(SolutionDir)\..\..\..\..\..\web\bin *.dll *.pdb /S /XO /IS /NJH /NFL /NDL
+if %25errorlevel%25 leq 3 exit 0 else exit %25errorlevel%25</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

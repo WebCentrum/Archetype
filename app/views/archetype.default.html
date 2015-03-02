@@ -1,6 +1,26 @@
 <div class="archetypeEditor ng-class:model.config.customCssClass">
     <textarea class="archetypeDeveloperModel" ng-show="model.config.developerMode" ng-model="model.value"></textarea>
-    <ul ui-sortable="sortableOptions" ng-model="model.value.fieldsets" ng-show="!showAddButton()">
+
+    <div ng-show="showAddButton() || model.config.addButtonPlacement === 'top'">
+        <a data-toggle="{{ model.config.fieldsets.length > 1 ? 'dropdown' : ''}}" ng-click="model.config.fieldsets.length == 1 ? addRow(model.config.fieldsets[0].alias) : return" prevent-default class="button">
+            <i class="icon icon-add dropdown-toggle"></i>
+            <localize key="general_add">Add</localize>
+        </a>
+        <a ng-show="canSortFunction()" ng-click="sort()" prevent-default class="button button-sort">
+            <i class="icon icon-axis-rotation-3"></i>
+            <localize key="general_sort">Sort</localize>
+        </a>
+        <ul class="dropdown-menu umb-actions">
+            <li ng-repeat="fieldsetModel in model.config.fieldsets" ng-click="addRow(fieldsetModel.alias)">
+                <a>
+                    <i class="fieldsetIcon icon ng-class:fieldsetModel.icon"></i>
+                    <span class="menu-label">{{fieldsetModel.label}}</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <ul ui-sortable="sortableOptions" ng-model="model.value.fieldsets" ng-show="!hideFieldsets()">
         <li ng-repeat="fieldset in model.value.fieldsets">
             <fieldset ng-class="['archetype-fieldset-' + fieldset.alias, (getFieldsetValidity(fieldset) == false ? 'archetypeFieldsetError' : '')]" ng-init="fieldsetConfigModel = getConfigFieldsetByAlias(fieldset.alias)">
                 <div class="archetypeFieldsetLabel" ng-class="{enableCollapsing: model.config.enableCollapsing}">
@@ -13,8 +33,8 @@
                         </label>
                     </div>
                     <div class="archetypeEditorControls label-sub" ng-hide="model.config.hideFieldsetControls">
-                        <i class="icon icon-add dropdown-toggle" ng-show="canAdd()" data-toggle="{{ model.config.fieldsets.length > 1 ? 'dropdown' : ''}}" ng-click="model.config.fieldsets.length == 1 ? addRow(fieldset.alias, $index) : return"></i>
-                        <ul class="dropdown-menu umb-actions">
+                        <i class="icon icon-add dropdown-toggle" ng-if="model.config.addButtonPlacement === 'item'" ng-show="canAdd()" data-toggle="{{ model.config.fieldsets.length > 1 ? 'dropdown' : ''}}" ng-click="model.config.fieldsets.length == 1 ? addRow(fieldset.alias, $index) : return"></i>
+                        <ul class="dropdown-menu umb-actions" ng-if="model.config.addButtonPlacement === 'item'">
                             <li ng-repeat="fieldsetModel in model.config.fieldsets" ng-click="addRow(fieldsetModel.alias, $parent.$index)">
                                 <a>
                                     <i class="fieldsetIcon icon ng-class:fieldsetModel.icon"></i>
@@ -22,14 +42,14 @@
                                 </a>
                             </li>
                         </ul>
-                        <i class="icon icon-remove" ng-click="removeRow($index)" ng-show="canRemove()"></i>
+                        <i class="icon icon-delete" ng-click="removeRow($index)" ng-show="canRemove()"></i>
                         <i class="icon icon-power" ng-class="{dimmed: fieldset.disabled}" ng-click="enableDisable(fieldset)" ng-show="canDisable()"></i>
                         <i class="icon icon-navigation handle" ng-show="canSort()"></i>
                     </div>
                 </div>
                 <div class="archetypeCollapser animate-hide" ng-hide="model.config.enableCollapsing && isCollapsed(fieldset)">
                     <form class="form-inline">
-                        <div ng-class="[('archetype-property-' + property.alias), (getPropertyValidity($parent.$index, property.alias) === false ? 'archetypePropertyError' : '')]" class="archetypeProperty control-group" ng-repeat="property in fieldsetConfigModel.properties">
+                        <div ng-class="[('archetype-property-' + property.alias), (getPropertyValidity($parent.$index, property.alias) === false ? 'archetypePropertyError' : '')]" class="archetypeProperty control-group {{model.config.propertyLabelsAbove === true ? 'label-above' : ''}}" ng-repeat="property in fieldsetConfigModel.properties">
                             <label ng-hide="model.config.hidePropertyLabels == '1'" class="control-label" for="archetype-property-{{model.alias}}-{{$parent.$index}}-{{$index}}">
                                 <span>{{property.label}}</span>
                                 <div class="archetypeFieldsetHelpText" ng-show="property.helpText">
@@ -46,13 +66,18 @@
             </fieldset>
         </li>
     </ul>
-    <div ng-show="showAddButton()">
-        <a data-toggle="{{ model.config.fieldsets.length > 1 ? 'dropdown' : ''}}" ng-click="model.config.fieldsets.length == 1 ? addRow(model.config.fieldsets[0].alias, 0) : return" prevent-default>
+
+    <div ng-show="model.config.addButtonPlacement === 'bottom'">
+        <a data-toggle="{{ model.config.fieldsets.length > 1 ? 'dropdown' : ''}}" ng-click="model.config.fieldsets.length == 1 ? addRow(model.config.fieldsets[0].alias) : return" prevent-default class="button">
             <i class="icon icon-add dropdown-toggle"></i>
-            <localize key="general_add" class="archetypeAddButtonText">Add</localize>
+            <localize key="general_add">Add</localize>
+        </a>
+        <a ng-show="canSortFunction()" ng-click="sort()" prevent-default class="button button-sort">
+            <i class="icon icon-axis-rotation-3"></i>
+            <localize key="general_sort">Sort</localize>
         </a>
         <ul class="dropdown-menu umb-actions">
-            <li ng-repeat="fieldsetModel in model.config.fieldsets" ng-click="addRow(fieldsetModel.alias, 0)">
+            <li ng-repeat="fieldsetModel in model.config.fieldsets" ng-click="addRow(fieldsetModel.alias)">
                 <a>
                     <i class="fieldsetIcon icon ng-class:fieldsetModel.icon"></i>
                     <span class="menu-label">{{fieldsetModel.label}}</span>

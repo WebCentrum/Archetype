@@ -9,8 +9,20 @@
     
     .dropdown-menu {
         top: auto;
+        margin-top: -5px;
         > li > a {
             border-radius: 6px;
+        }
+    }
+
+    .button {
+        cursor: pointer;
+        border: 1px #d9d9d9 dashed!important;
+        padding: 5px 15px 5px 15px;
+        display: inline-block;
+        margin-bottom: 5px;
+        &-sort {
+            float: right;
         }
     }
 
@@ -49,7 +61,23 @@
                 &.dimmed span {
                     color: #d9d9d9;
                 }
+            }
+        }
 
+        .archetypeProperty.label-above {
+            >label {
+                width: 100%;
+                line-height: 13px;
+                >div {
+                    display: inline;
+                    >small {
+                        display: inline;
+                    }
+                }
+            }
+
+            >.controls {
+                margin-left: 20px;
             }
         }
 
@@ -177,14 +205,6 @@
 
     .archetypeFieldsetError {
         border: 1px solid #b94a48;
-    }
-
-    .archetypeAddButton:hover {
-        text-decoration: none;
-
-        .archetypeAddButtonText {
-            text-decoration: underline;
-        }
     }
 
     .multiPropertyTextbox {

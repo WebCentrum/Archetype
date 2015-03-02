@@ -90,12 +90,24 @@
             <input type="checkbox" id="archetypeAdvancedOptionsStartWithAddButton" ng-model="archetypeConfigRenderModel.startWithAddButton"/>
         </div>
         <div>
+            <label for="archetypeAdvancedOptionsAddButtonPlacement"><archetype-localize key="addButtonPlacement">Add Button Placement</archetype-localize><small><archetype-localize key="addButtonPlacementDescription">Where to show the Add button.</archetype-localize></small></label>
+            <select id="archetypeAdvancedOptionsAddButtonPlacement" ng-options="p.alias as p.label for p in addButtonPlacements" ng-model="archetypeConfigRenderModel.addButtonPlacement" />
+        </div>
+        <div>
+            <label for="archetypeAdvancedOptionsNewRowOnTop"><archetype-localize key="newRowOnTop">New row placement on top instead of bottom</archetype-localize><small><archetype-localize key="newRowOnTopDescription">Placement of new items; takes effect only when Add button position is above or below</archetype-localize></small></label>
+            <input type="checkbox" id="archetypeAdvancedOptionsNewRowOnTop" ng-model="archetypeConfigRenderModel.newRowOnTop" />
+        </div>
+        <div>
             <label for="archetypeAdvancedOptionsHideControls"><archetype-localize key="hideFieldsetControls">Hide Fieldset Controls?</archetype-localize><small><archetype-localize key="hideFieldsetControlsDescription">Hides the fieldset add/remove/sort controls.</archetype-localize></small></label>
             <input type="checkbox" id="archetypeAdvancedOptionsHideControls" ng-model="archetypeConfigRenderModel.hideFieldsetControls"/>
         </div>
         <div>
             <label for="archetypeAdvancedOptionsHideLabels"><archetype-localize key="hidePropertyLabels">Hide Property Labels?</archetype-localize><small><archetype-localize key="hidePropertyLabelsDescription">Hides the property labels.</archetype-localize></small></label>
             <input type="checkbox" id="archetypeAdvancedOptionsHideLabels" ng-model="archetypeConfigRenderModel.hidePropertyLabels"/>
+        </div>
+        <div>
+            <label for="archetypeAdvancedOptionsPropertyLabelsAbove"><archetype-localize key="propertyLabelsAbove">Property Labels above Fields?</archetype-localize><small><archetype-localize key="propertyLabelsAboveDescription">Show the property labels above fields, instead of next to them.</archetype-localize></small></label>
+            <input type="checkbox" id="archetypeAdvancedOptionsPropertyLabelsAbove" ng-model="archetypeConfigRenderModel.propertyLabelsAbove" />
         </div>
         <div>
             <label for="archetypeAdvancedOptionsMaxFieldsets"><archetype-localize key="maxFieldsets">Max Fieldsets</archetype-localize><small><archetype-localize key="maxFieldsetsDescription">How many Fieldsets are allowed? Entering '1' will disable the controls. Default is unlimited.</archetype-localize></small></label>
@@ -126,8 +138,12 @@
             <input type="text" id="archetypeAdvancedOptionsCustomCss" ng-model="archetypeConfigRenderModel.customCssPath"/>
         </div>
         <div>
-            <label for="archetypeAdvancedOptionsCustomJs"><archetype-localize key="jsFile">JS File</archetype-localize><small><archetype-localize key="jsFileDescription">(Optional) Enter a path for a custom JS file to be included on the page.</archetype-localize></small></label>
+            <label for="archetypeAdvancedOptionsCustomJs"><archetype-localize key="jsFile">JS File</archetype-localize><small><archetype-localize key="jsFileDescription">(Optional) Enter a path for a custom JS file to be included on the page; multiple files can be split by ';'.</archetype-localize></small></label>
             <input type="text" id="archetypeAdvancedOptionsCustomJs" ng-model="archetypeConfigRenderModel.customJsPath"/>
+        </div>
+        <div>
+            <label for="archetypeAdvancedOptionsSortFunction"><archetype-localize key="sortFunction">JS Function for Fieldset Sorting</archetype-localize><small><archetype-localize key="sortFunctionDescription">(Optional) Name of JS function to use for fieldsets sorting. It is called with one argument - the array of fieldsets.</archetype-localize></small></label>
+            <input type="text" id="archetypeAdvancedOptionsSortFunction" ng-model="archetypeConfigRenderModel.sortFunction" />
         </div>
         <div>
             <label for="archetypeAdvancedOptionsCustomView"><archetype-localize key="viewFile">View File</archetype-localize><small><archetype-localize key="viewFileDescription">(Optional) Enter a path for a custom view file to be used to render this Archetype.</archetype-localize></small></label>

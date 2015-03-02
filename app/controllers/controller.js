@@ -81,6 +81,7 @@
         axis: 'y',
         cursor: "move",
         handle: ".handle",
+        disabled: $scope.model.config.sortFunction !== undefined,
         update: function (ev, ui) {
             $scope.setDirty();
         },
@@ -103,7 +104,11 @@
                 }
                 else
                 {
-                    $scope.model.value.fieldsets.push(newFieldset);
+                    if ($scope.model.config.newRowOnTop) {
+                        $scope.model.value.fieldsets.unshift(newFieldset);
+                    } else {
+                        $scope.model.value.fieldsets.push(newFieldset);
+                    }
                 }
             }
             $scope.setDirty();
@@ -111,6 +116,10 @@
             newFieldset.collapse = $scope.model.config.enableCollapsing ? true : false;
             $scope.focusFieldset(newFieldset);
         }
+    }
+
+    $scope.sort = function () {
+        $scope.model.value.fieldsets = executeFunctionByName($scope.model.config.sortFunction, window, $scope.model.value.fieldsets);
     }
 
     $scope.removeRow = function ($index) {
@@ -150,7 +159,13 @@
     //helper that returns if an item can be sorted
     $scope.canSort = function ()
     {
-        return countVisible() > 1;
+        return countVisible() > 1
+            && $scope.model.config.sortFunction === undefined;
+    }
+
+    $scope.canSortFunction = function () {
+        return countVisible() > 1
+            && $scope.model.config.sortFunction;
     }
 
     //helper that returns if an item can be disabled
@@ -158,10 +173,17 @@
         return $scope.model.config.enableDisabling;
     }
 
+    $scope.hideFieldsets = function () {
+        return $scope.model.config.startWithAddButton
+            && countVisible() === 0;
+        ///&& $scope.model.config.fieldsets.length == 1;
+    }
+
     //helpers for determining if the add button should be shown
     $scope.showAddButton = function () {
         return $scope.model.config.startWithAddButton
-            && countVisible() === 0;
+            && countVisible() === 0
+            && $scope.model.config.addButtonPlacement === 'item';
             ///&& $scope.model.config.fieldsets.length == 1;
     }
 
@@ -343,7 +365,9 @@
 
     //custom js
     if ($scope.model.config.customJsPath) {
-        assetsService.loadJs($scope.model.config.customJsPath);
+        _.each($scope.model.config.customJsPath.split(';'), function (path) {
+            assetsService.loadJs(path);
+        });
     }
 
     //archetype css
@@ -353,5 +377,12 @@
     if($scope.model.config.customCssPath)
     {
         assetsService.loadCss($scope.model.config.customCssPath);
+    }
+
+    //custom sorting
+    if ($scope.model.config.sortFunction) {
+        $scope.$on("formSubmitting", function () {;
+            $scope.sort();
+        });
     }
 });
