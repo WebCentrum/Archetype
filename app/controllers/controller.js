@@ -96,8 +96,11 @@
         update: function (ev, ui) {
             $scope.setDirty();
         },
-        stop: function (ev, ui) {
-
+        stop: function (e, ui) {
+            ui.item.parent().find('.mceNoEditor').each(function () {
+                tinyMCE.execCommand('mceRemoveEditor', false, $(this).attr('id'));
+                tinyMCE.execCommand('mceAddEditor', false, $(this).attr('id'));
+            });
         }
     };
 
