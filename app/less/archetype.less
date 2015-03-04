@@ -5,11 +5,15 @@
     
     .open {
         position: relative;
+        >.dropdown-menu {
+            display: block; // override grid hiding
+        }
     }
     
     .dropdown-menu {
         top: auto;
         margin-top: -5px;
+        display: none; // in grid
         > li > a {
             border-radius: 6px;
         }
@@ -68,6 +72,7 @@
             >label {
                 width: 100%;
                 line-height: 13px;
+                float: none;
                 >div {
                     display: inline;
                     >small {
