@@ -255,8 +255,8 @@
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <PropertyGroup>
     <PostBuildEvent>if $(ConfigurationName) == Debug (
-  call robocopy $(TargetDir) $(SolutionDir)\..\..\..\..\..\web\bin *.dll *.pdb /S /XO /IS /NJH /NFL /NDL
-  if %25errorlevel%25 leq 3 exit 0 else exit %25errorlevel%25
+  call robocopy $(TargetDir) $(SolutionDir)\..\..\..\..\..\web\bin *.dll *.pdb /S /IS /NJH /NFL /NDL
+  if %25errorlevel%25 lss 8 exit 0 else exit %25errorlevel%25
 )</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
