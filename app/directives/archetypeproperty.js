@@ -114,7 +114,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
             var propertyConfig = getPropertyByAlias(configFieldsetModel, property.alias);
             if (propertyConfig) {
                 // use property.value !== property.value to check for NaN values on numeric inputs
-                if (propertyConfig.required && (property.value == null || property.value === "" || property.value !== property.value)) {
+                if (propertyConfig.required && (property.value == null || property.value === "" || Array.isArray(property.value) && property.value.length == 0 || property.value !== property.value)) {
                     property.isValid = false;
                 }
                 // issue 116: RegEx validate property value
