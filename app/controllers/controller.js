@@ -1,4 +1,6 @@
-﻿angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, assetsService, angularHelper, notificationsService, $timeout, entityResource) {
+﻿app.requires.push('ngSanitize');
+
+angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, assetsService, angularHelper, notificationsService, $timeout, entityResource) {
 
     //$scope.model.value = "";
     $scope.model.hideLabel = $scope.model.config.hideLabel == 1;
@@ -131,7 +133,7 @@
     }
 
     $scope.sort = function () {
-        $scope.model.value.fieldsets = executeFunctionByName($scope.model.config.sortFunction, window, $scope.model.value.fieldsets);
+        executeFunctionByName($scope.model.config.sortFunction, window, $scope.model.value.fieldsets);
     }
 
     $scope.removeRow = function ($index) {
