@@ -86,7 +86,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
             });
         });
 
-        scope.$on("formSubmitting", function (ev, args) {
+        scope.$on("archetypeFormSubmitting", function (ev, args) {
             // validate all fieldset properties
             _.each(scope.fieldset.properties, function (property) {
                 validateProperty(scope.fieldset, property);
@@ -101,6 +101,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
             var validationKey = "validation-f" + scope.fieldsetIndex;
             ngModelCtrl.$setValidity(validationKey, scope.fieldset.isValid);
         });
+
 
         // called when the value of any property in a fieldset changes
         function propertyValueChanged(fieldset, property) {
@@ -159,6 +160,14 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
     };
 
     function loadView(view, config, defaultValue, alias, propertyAlias, dataTypeGuid, scope, element, ngModelCtrl, propertyValueChanged) {
+        var getFieldset = function(scope) {
+            return scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex];
+        }
+
+        var getFieldsetProperty = function (scope) {
+            return getFieldset(scope).properties[scope.renderModelPropertyIndex];
+        }
+
         if (view)
         {
             $http.get(view, { cache: true }).success(function (data) {
@@ -174,14 +183,15 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                     scope.model.config = {};
 
                     //ini the property value after test to make sure a prop exists in the renderModel
-                    var renderModelPropertyIndex = getPropertyIndexByAlias(scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties, alias);
+                    scope.renderModelPropertyIndex = getPropertyIndexByAlias(getFieldset(scope).properties, alias);
 
-                    if (!renderModelPropertyIndex)
+                    if (!scope.renderModelPropertyIndex)
                     {
-                        scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties.push(JSON.parse('{"alias": "' + alias + '", "value": "' + defaultValue + '"}'));
-                        renderModelPropertyIndex = getPropertyIndexByAlias(scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties, alias);
+                        getFieldset(scope).properties.push(JSON.parse('{"alias": "' + alias + '", "value": "' + defaultValue + '"}'));
+                        scope.renderModelPropertyIndex = getPropertyIndexByAlias(getFieldset(scope).properties, alias);
                     }
-                    scope.model.value = scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties[renderModelPropertyIndex].value;
+                    scope.renderModel = {};
+                    scope.model.value = getFieldsetProperty(scope).value;
 
                     //set the config from the prevalues
                     scope.model.config = config;
@@ -203,6 +213,9 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
 
                     //Vorto data type guid
                     scope.model.dataTypeGuid = dataTypeGuid;
+                    scope.model.validation = {
+                        mandatory: true
+                    };
 
                     //console.log(scope.model.config);
 
@@ -211,10 +224,21 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
 
                     //watch for changes since there is no two-way binding with the local model.value
                     scope.$watch('model.value', function (newValue, oldValue) {
-                        scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties[renderModelPropertyIndex].value = newValue;
+                        getFieldsetProperty(scope).value = newValue;
 
                         // notify the linker that the property value changed
-                        propertyValueChanged(scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex], scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex].properties[renderModelPropertyIndex]);
+                        propertyValueChanged(getFieldset(scope), getFieldsetProperty(scope));
+                    });
+
+                    scope.$on('archetypeFormSubmitting', function (ev, args) {
+                        // did the value change (if it did, it most likely did so during the "formSubmitting" event)
+                        var currentValue = getFieldsetProperty(scope).value;
+                        if (currentValue != scope.model.value) {
+                            getFieldsetProperty(scope).value = scope.model.value;
+
+                            // notify the linker that the property value changed
+                            propertyValueChanged(getFieldset(scope), getFieldsetProperty(scope));
+                        }
                     });
 
                     element.html(data).show();

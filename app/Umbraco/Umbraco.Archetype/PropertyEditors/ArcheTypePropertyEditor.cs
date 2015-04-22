@@ -66,10 +66,7 @@ namespace Archetype.PropertyEditors
 					{
                         try
                         {
-                            // possible to add custom properties to fieldset which are not defined in prevalue config
-                            if (propDef.DataTypeGuid.IsNullOrWhiteSpace())
-                                continue;
-
+                            if(propDef == null || propDef.DataTypeGuid == null) continue;
                             var dtd = ArchetypeHelper.Instance.GetDataTypeByGuid(Guid.Parse(propDef.DataTypeGuid));
 						    var propType = new PropertyType(dtd) { Alias = propDef.Alias };
 						    var prop = new Property(propType, propDef.Value);

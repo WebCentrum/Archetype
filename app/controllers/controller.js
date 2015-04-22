@@ -95,12 +95,16 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         cursor: "move",
         handle: ".handle",
         disabled: $scope.model.config.sortFunction !== undefined,
+        start: function(ev, ui) {
+            ui.item.parent().find('.umb-rte textarea').each(function () {
+                tinyMCE.execCommand('mceRemoveEditor', false, $(this).attr('id'));
+            });
+        },
         update: function (ev, ui) {
             $scope.setDirty();
         },
-        stop: function (e, ui) {
-            ui.item.parent().find('.mceNoEditor').each(function () {
-                tinyMCE.execCommand('mceRemoveEditor', false, $(this).attr('id'));
+        stop: function (ev, ui) {
+            ui.item.parent().find('.umb-rte textarea').each(function () {
                 tinyMCE.execCommand('mceAddEditor', false, $(this).attr('id'));
             });
         }
@@ -319,6 +323,8 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
                 $scope.model.value.toString = stringify;
             }
         }
+        // reset submit watcher counter on save
+        $scope.activeSubmitWatcher = 0;
     });
 
     //helper to count what is visible
@@ -426,5 +432,18 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         $scope.$on("formSubmitting", function () {;
             $scope.sort();
         });
+    }
+
+    // submit watcher handling:
+    // because some property editors use the "formSubmitting" event to set/clean up their model.value,
+    // we need to monitor the "formSubmitting" event from a custom property and broadcast our own event
+    // to forcefully update the appropriate model.value's
+    $scope.activeSubmitWatcher = 0;
+    $scope.submitWatcherOnLoad = function () {
+        $scope.activeSubmitWatcher++;
+        return $scope.activeSubmitWatcher;
+    }
+    $scope.submitWatcherOnSubmit = function () {
+        $scope.$broadcast("archetypeFormSubmitting");
     }
 });
