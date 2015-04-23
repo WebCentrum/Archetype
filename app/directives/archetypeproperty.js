@@ -1,4 +1,4 @@
-angular.module("umbraco.directives").directive('archetypeProperty', function ($compile, $http, archetypePropertyEditorResource, umbPropEditorHelper, $timeout, $rootScope, $q, editorState) {
+angular.module("umbraco.directives").directive('archetypeProperty', function ($compile, $http, archetypePropertyEditorResource, umbPropEditorHelper, $timeout, $rootScope, $q, editorState, serverValidationManager) {
 
     function getFieldsetByAlias(fieldsets, alias)
     {
@@ -56,6 +56,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
         var alias = configFieldsetModel.properties[scope.propertyConfigIndex].alias;
         var defaultValue = configFieldsetModel.properties[scope.propertyConfigIndex].value;
         var propertyAlias = getUniquePropertyAlias(scope);
+        var required = configFieldsetModel.properties[scope.propertyConfigIndex].required;
         propertyAliasParts = [];
 
         //try to convert the defaultValue to a JS object
@@ -82,7 +83,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
 
                 var mergedConfig = _.extend(defaultConfigObj, config);
 
-                loadView(pathToView, mergedConfig, defaultValue, alias, propertyAlias, dataTypeGuid, scope, element, ngModelCtrl, propertyValueChanged);
+                loadView(pathToView, mergedConfig, defaultValue, alias, propertyAlias, dataTypeGuid, required, scope, element, ngModelCtrl, propertyValueChanged);
             });
         });
 
@@ -104,9 +105,9 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
 
 
         // called when the value of any property in a fieldset changes
-        function propertyValueChanged(fieldset, property) {
+        function propertyValueChanged(fieldset, property, isValid) {
             // it's the Umbraco way to hide the invalid state when altering an invalid property, even if the new value isn't valid either
-            property.isValid = true;
+            property.isValid = isValid;
             setFieldsetValidity(fieldset);
         }
 
@@ -137,6 +138,9 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                 _.find(fieldset.properties, function (property) {
                     return property.isValid == false
                 }) == null;
+
+            var validationKey = "validation-f" + scope.fieldsetIndex;
+            ngModelCtrl.$setValidity(validationKey, scope.fieldset.isValid);
         }
     }
 
@@ -159,7 +163,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
         return _.unique(propertyAliasParts).reverse().join("-");
     };
 
-    function loadView(view, config, defaultValue, alias, propertyAlias, dataTypeGuid, scope, element, ngModelCtrl, propertyValueChanged) {
+    function loadView(view, config, defaultValue, alias, propertyAlias, dataTypeGuid, required, scope, element, ngModelCtrl, propertyValueChanged) {
         var getFieldset = function(scope) {
             return scope.archetypeRenderModel.fieldsets[scope.fieldsetIndex];
         }
@@ -214,7 +218,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                     //Vorto data type guid
                     scope.model.dataTypeGuid = dataTypeGuid;
                     scope.model.validation = {
-                        mandatory: true
+                        mandatory: required
                     };
 
                     //console.log(scope.model.config);
@@ -230,15 +234,34 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
                         propertyValueChanged(getFieldset(scope), getFieldsetProperty(scope));
                     });
 
+                    var hasError = false;
+                    var showValidation = serverValidationManager.items.length > 0;
+
+                    //watch for custom property validity changes
+                    scope.$watch("archetypePropertyForm.$invalid", function (newValue, oldValue) {
+                        hasError = newValue; //args.form.$invalid && element.find(".ng-invalid").length > 0;
+
+                        if (showValidation) {
+                            propertyValueChanged(getFieldset(scope), getFieldsetProperty(scope), !hasError);
+                        }
+                    });
+
+                    //listen for the forms saved event
+                    scope.$on("formSubmitted", function (ev, args) {
+                        showValidation = false;
+                    });
+
                     scope.$on('archetypeFormSubmitting', function (ev, args) {
+                        showValidation = true;
+
                         // did the value change (if it did, it most likely did so during the "formSubmitting" event)
                         var currentValue = getFieldsetProperty(scope).value;
                         if (currentValue != scope.model.value) {
                             getFieldsetProperty(scope).value = scope.model.value;
-
-                            // notify the linker that the property value changed
-                            propertyValueChanged(getFieldset(scope), getFieldsetProperty(scope));
                         }
+
+                        // notify the linker that the property value changed
+                        propertyValueChanged(getFieldset(scope), getFieldsetProperty(scope), !hasError);
                     });
 
                     element.html(data).show();
@@ -259,6 +282,7 @@ angular.module("umbraco.directives").directive('archetypeProperty', function ($c
         restrict: "E",
         replace: true,
         link: linker,
+        template: "<ng-form name='archetypePropertyForm'></ng-form>",
         scope: {
             property: '=',
             propertyConfigIndex: '=',

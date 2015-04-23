@@ -1,6 +1,6 @@
 ﻿app.requires.push('ngSanitize');
 
-angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, assetsService, angularHelper, notificationsService, $timeout, entityResource) {
+angular.module("umbraco").controller("Imulus.ArchetypeController", function ($scope, $http, assetsService, angularHelper, notificationsService, $timeout, entityResource, serverValidationManager) {
 
     //$scope.model.value = "";
     $scope.model.hideLabel = $scope.model.config.hideLabel == 1;
@@ -137,7 +137,10 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
     }
 
     $scope.sort = function () {
-        executeFunctionByName($scope.model.config.sortFunction, window, $scope.model.value.fieldsets);
+        //custom sorting only when all is valid, otherwise error indexes would be wrong
+        if ($scope.model.config.sortFunction && _.findWhere($scope.model.value.fieldsets, { isValid: false }) == undefined) {
+            executeFunctionByName($scope.model.config.sortFunction, window, $scope.model.value.fieldsets);
+        }
     }
 
     $scope.removeRow = function ($index) {
@@ -427,13 +430,6 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         assetsService.loadCss($scope.model.config.customCssPath);
     }
 
-    //custom sorting
-    if ($scope.model.config.sortFunction) {
-        $scope.$on("formSubmitting", function () {;
-            $scope.sort();
-        });
-    }
-
     // submit watcher handling:
     // because some property editors use the "formSubmitting" event to set/clean up their model.value,
     // we need to monitor the "formSubmitting" event from a custom property and broadcast our own event
@@ -445,5 +441,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
     }
     $scope.submitWatcherOnSubmit = function () {
         $scope.$broadcast("archetypeFormSubmitting");
+
+        $scope.sort();
     }
 });
