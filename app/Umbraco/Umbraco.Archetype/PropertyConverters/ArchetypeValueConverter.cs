@@ -1,6 +1,6 @@
-using System;
 using Archetype.Extensions;
 using Archetype.Models;
+using System;
 using Umbraco.Core;
 using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Core.PropertyEditors;
@@ -39,14 +39,14 @@ namespace Archetype.PropertyConverters
             if (!sourceString.DetectIsJson())
                 return defaultValue;
 
-			using (var timer = DisposableTimer.DebugDuration<ArchetypeValueConverter>(string.Format("ConvertDataToSource ({0})", propertyType != null ? propertyType.PropertyTypeAlias : "null")))
-            {
+			//using (var timer = DisposableTimer.DebugDuration<ArchetypeValueConverter>(string.Format("ConvertDataToSource ({0})", propertyType != null ? propertyType.PropertyTypeAlias : "null")))
+            //{
                 var archetype = ArchetypeHelper.Instance.DeserializeJsonToArchetype(sourceString,
                     (propertyType != null ? propertyType.DataTypeId : -1),
                     (propertyType != null ? propertyType.ContentType : null));
 
                 return archetype;
-            }
+            //}
         }
     }
 }
