@@ -1,15 +1,26 @@
-﻿/* TODO: clean this up */
+﻿{{VERSION}}
 
 .archetypeEditor {
     width: 98%;
-    
+
+    .usky-grid {
+        .cell-tools-menu {
+            height: 385px;
+        }
+        &.withGroups {
+            .cell-tools-menu {
+                height: 415px;
+            }
+        }
+    }
+
     .open {
         position: relative;
         >.dropdown-menu {
             display: block; // override grid hiding
         }
     }
-    
+
     .dropdown-menu {
         top: auto;
         margin-top: -5px;
@@ -38,15 +49,28 @@
         margin-left: 0;
     }
 
-    .icon {
+    .fieldsetIcon {
+        float: left;
+        padding: 0 4px 0 0;
         color: #333;
+        vertical-align: text-bottom;
     }
-    
+
+    .caret {
+        margin: 8px 1px 0 2px;
+        &.caret-right {
+            border-bottom: 4px solid transparent;
+            border-top: 4px solid transparent;
+            border-left: 4px solid #ddd;
+            content: "";
+            margin-top: 6px;
+        }
+    }
+
     fieldset {
-        border: 1px solid #dddddd;
+        border-bottom: 1px dashed #dddddd;
         padding: 0;
         margin-bottom: 5px;
-        background-color: #f1f1f1;
         clear: both;
         display: inline-block;
         width: 100%;
@@ -84,17 +108,48 @@
             >.controls {
                 margin-left: 20px!important;
             }
+            
+            .publishOptions {
+                .publishDate {
+                    display: inline-block;
+                    vertical-align: top;
+                    margin-right: 20px;
+                    
+                    label {
+                        padding: 0 !important;
+                        margin: 0 !important;
+                    }
+                }
+            }
         }
 
         .archetypeFieldsetLabel {
             position: relative;
             width: 100%;
+            min-height: 42px;
 
             .label-sub {
-                padding: 8px 0;
+                padding: 8px 0 8px 0;
                 display: inline-block;
+                min-height: 20px; /* this makes the header clickable when there's no icon and no text */
                 &.module-label {
                     width: 100%;
+                }
+                &:hover {
+                    cursor: pointer;
+    
+                    label  {
+                        span {
+                            text-decoration: underline;
+                        }
+                        &:hover {
+                            cursor: pointer;
+                        }
+                    }
+                    
+                    .caret-right {
+                        border-left-color: #333;
+                    }
                 }
             }
 
@@ -116,40 +171,26 @@
                 cursor: default;
             }
 
-            &.enableCollapsing:hover {
-                cursor: pointer;
-
-                label  {
-                    span {
-                        text-decoration: underline;
-                    }
-                    &:hover {
-                        cursor: pointer;
-                    }
-                }
-            }
-
             .caret {
-                margin: 8px 1px 0 15px;
-
-                &.caret-right {
-                    border-bottom: 4px solid transparent;
-                    border-top: 4px solid transparent;
-                    border-left: 4px solid #000000;
-                    content: "";
-                    margin-top: 6px;
-                }
+                position: absolute;
             }
 
             label {
                 margin-bottom: 0;
-                margin-left: 5px;
+                margin-left: 18px;
+                white-space: nowrap;
                 padding: 0;
+                width: ~"calc(100% - 144px)";
+                position: absolute;
                 span {
-                    display: inline-block;
+                    display: block;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
                 &.dimmed {
-                    color: #d9d9d9;
+                    i, span {
+                        color: #d9d9d9 !important;
+                    }
                 }
             }
 
@@ -158,6 +199,33 @@
                 position: absolute;
                 right: 15px;
                 top: 0;
+
+                .icon {
+                    color: #ddd;
+                    padding: 2px;
+                    font-size: 16px;
+                    &:hover {
+                        color: #333;
+                    }
+                    &.icon-delete:hover {
+                        color: #b94a48;
+                    }
+                    &.icon-disabled {
+                        cursor: default;
+                        &:hover {
+                            color: #ddd;
+                        }
+                    }
+                    &.icon-active {
+                        color: #333;
+                        &:hover {
+                            color: #333;
+                        }
+                    }
+                }
+            }
+            
+            &:hover {
             }
         }
 
@@ -174,9 +242,8 @@
         .archetypeCollapser {
             clear: both;
             height: 100%;
-            padding-top: 12px;
+            padding: 12px 0 0 20px;
             background-color: #fff;
-            border-top: 1px solid silver;
             border-radius: 0 0 0 5px;
 
             form {
@@ -208,6 +275,27 @@
         border: 1px solid #b94a48;
     }
 
+    .archetypeAddButton {
+        color: #ddd;
+        .icon {
+            vertical-align: text-top;
+        }
+        &:hover {
+            color: #333;
+            text-decoration: none;
+            cursor: pointer;
+
+            .archetypeAddButtonText {
+                text-decoration: underline;
+            }
+
+            .icon {
+                color: #333;
+            }
+        }
+
+    }
+
     .multiPropertyTextbox {
         margin-bottom: 3px;
     }
@@ -222,12 +310,91 @@
             color: #343434;
         }
     }
+
+    .fieldsetPicker {
+        .icon {
+            color: #333;
+        }
+        ul.elements li {
+            overflow: visible;
+            vertical-align: top;  
+            height: 90px;        
+        }
+        ul.groups {
+            display: block;
+            margin: 0;
+            padding: 4px;
+            li {
+                width: auto;
+                margin: 0;
+                padding: 0 20px;
+                font-weight: bold;
+                a {
+                    color: #d9d9d9;
+                    cursor: pointer;
+                }
+                &.active a, a:hover {
+                    color: #999;
+                    text-decoration: none;
+                }
+            }
+        }
+    }
+
+    .settingsWrapper {
+        &:hover {
+            caret {
+                background-color: #333;
+            }
+        }
+        .settingsHeader {
+            label {
+                display: inline-block;
+            }
+            &:hover {
+                cursor: pointer;
+                label {
+                    text-decoration: underline;
+                }
+
+                .caret-right {
+                    border-left-color: #333;
+                }
+            }
+        }
+        .settings {
+            padding: 14px;
+            background-color: #f8f8f8;
+            overflow: hidden;
+
+            .allowedGroups {
+                .umb-membergrouppicker a {
+                    i {
+                        padding-right: 0;
+                        font-size: inherit;
+                    }
+
+                    &:hover i {
+                        color: #333;
+                    }
+                }
+            }
+        }
+    }
+
+    // Necessary to ensure empty lists can be dropped onto when sorting nested fieldsets.
+    .archetypeSortable.archetypeEmpty {
+        min-height: 42px;
+        border: 1px dashed #dddddd;
+        margin-top: 5px;
+    }
 }
 
 .archetypeEditor, .archetypeConfig {
     .archetypeEditorControls {
         float: right;
-
+    }
+    .archetypeEditorControls, .archetypeFieldsetGroups {
         i {
             cursor: pointer;
             &.handle {
@@ -243,6 +410,29 @@
 .archetypeConfig {
     margin-bottom: 20px;
 
+    .archetype-headline {
+
+        img {
+            margin-right: 5px;
+        }
+
+        small {
+            margin-left: 5px;
+        }
+        
+        a {
+            float: right;
+            
+            img {
+                width: 35px;
+            }
+        }
+    }
+
+    .manual-link {
+        color: blue;
+    }
+
     ul {
         list-style: none;
     }
@@ -253,6 +443,7 @@
 
     label {
         width: 120px;
+        padding-left: 0;
     }
 
     .archetypeEditorControls {
@@ -276,8 +467,10 @@
 
     .archetypeFieldsetOption {
         margin-bottom: 15px;
+        margin-right: 15px;
         input[type=text]{
-            max-width: 300px;
+            max-width: 100%;
+            width: 100%;
         }
     }
 
@@ -288,15 +481,20 @@
         height: 130px;
     }
 
-    .archetypeOptions label{
-        width: 400px;
+    .archetypeOptions {
+        .btn {
+            margin-bottom: 5px;
+        }
+
+        label{
+            width: 400px;
+        }
     }
 
     .archetypePropertiesWrapper {
         border: 1px solid #ddd;
         padding: 8px;
         margin: -40px 10px 10px 140px;
-        max-width: 475px;
 
         ul {
             padding: 0;
@@ -309,12 +507,13 @@
             background-color: #eee;
 
             input[type=text] {
-                max-width: 190px;
-                width: auto;
+                max-width: 100%;
+                width: 100%;
             }
 
             select {
-                max-width: 160px;
+                max-width: 100%;
+                width: 100%;
             }
         }
 
@@ -324,13 +523,45 @@
     }
 
     .archetypeAdvancedOptions {
-        margin-top: 15px;
-        div {
-            margin-bottom: 10px;
-        }
         label {
-            width: 400px;
+            width: 100%;
         }
+        
+        input[type=text] {
+            width: 100%;
+        }
+
+        input[type=checkbox] {
+            margin-top: 0;
+            margin-right: 2px;
+        }
+
+        small {
+            color: #b3b3b3;
+        }
+
+        .archetypeFieldsetGroups {
+            padding: 0 10px;
+            margin-bottom: 20px;
+
+            ul {
+                padding: 0;
+                margin: 0;
+                margin-top: 15px;
+
+                li {
+
+                    label {
+                        width: 120px;
+                    }
+
+                    input {
+                        vertical-align: middle;
+                        width: 240px;
+                    }
+                }
+            }
+        }        
     }
 
     .archetypeMaxFieldsets{
@@ -346,8 +577,10 @@
 
     .archetypePropertyCollapser {
         margin-top: 10px;
+        
         div {
             margin-bottom: 10px;
+            margin-right: 15px;
         }
     }
 
@@ -363,6 +596,10 @@
 .ui-sortable-placeholder {
     visibility: visible !important;
     background-color:   #d0e7f1 !important;
+}
+
+.archetype-dialog {
+    margin: 10px;
 }
 
 
