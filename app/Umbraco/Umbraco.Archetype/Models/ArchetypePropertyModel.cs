@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-using System.Linq;
 using Archetype.Extensions;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Linq;
 using Umbraco.Core;
 using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Core.PropertyEditors;
@@ -43,6 +43,14 @@ namespace Archetype.Models
         /// <returns></returns>
         public T GetValue<T>()
         {
+            var properyType = this.CreateDummyPropertyType();
+
+            var result = properyType.ConvertDataToSource(Value, false);
+            if (result is T)
+                return (T) result;
+            else
+                return default(T);
+
             // Try Umbraco's PropertyValueConverters
             var converters = UmbracoContext.Current != null ? PropertyValueConvertersResolver.Current.Converters : Enumerable.Empty<IPropertyValueConverter>();
             if (!string.IsNullOrWhiteSpace(this.PropertyEditorAlias) && converters.Any())
