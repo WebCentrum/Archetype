@@ -81,8 +81,6 @@
             margin-top: 3px;
 
             label {
-                padding-left: 5px !important;
-
                 span {
                     color: #343434;
                 }
@@ -95,18 +93,12 @@
         .archetypeProperty.label-above {
             >label {
                 width: 100%;
-                line-height: 13px;
                 float: none;
-                >div {
-                    display: inline;
-                    >small {
-                        display: inline;
-                    }
-                }
+                margin-bottom: 10px;
             }
 
             >.controls {
-                margin-left: 20px!important;
+                margin-left: 0 !important;
             }
             
             .publishOptions {
@@ -245,6 +237,8 @@
             padding: 12px 0 0 20px;
             background-color: #fff;
             border-radius: 0 0 0 5px;
+            border: 1px dashed #ddd;
+            border-bottom: 0;
 
             form {
                 margin-left:20px;
@@ -258,6 +252,10 @@
                 clear:both;
                 margin-bottom: 3px;
                 font-size: 12px;
+            }
+
+            label > div, label > p, label > span {
+                margin-left: 0 !important;
             }
         }
     }

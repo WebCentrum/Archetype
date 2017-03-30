@@ -294,7 +294,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         // calculate overlay position
         // - yeah... it's jQuery (ungh!) but that's how the Grid does it.
         var offset = $(event.target).offset();
-        var scrollTop = $(event.target).closest(".umb-panel-body").scrollTop();
+        var scrollTop = $(event.target).closest(".umb-overlay-container, .umb-panel-body").scrollTop();
         if (offset.top < 400) {
             $scope.overlayMenu.style.top = 300 + scrollTop;
         }
