@@ -1,6 +1,7 @@
 {
 	"label": "Label",
 	"alias": "Alias", 
+    "addFieldset": "Přidat",
 	"hideFieldsetControls": "Hide Fieldset Controls?",
 	"hideFieldsetControlsDescription": "Hides the fieldset add/remove/sort controls.",
 	"toggleAdvanced": "Toggle Advanced Options",

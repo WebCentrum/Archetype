@@ -27,7 +27,7 @@
     <textarea class="archetypeDeveloperModel" ng-show="model.config.developerMode" ng-model="model.value"></textarea>
 
     <div ng-show="canAdd() && model.config.addButtonPlacement === 'top'">
-        <a class="archetypeAddButton" ng-click="openFieldsetPicker(0, $event)" prevent-default>
+        <a class="archetypeAddButton" ng-click="openFieldsetPicker(undefined, $event)" prevent-default>
             <i class="icon icon-add"></i>
             <archetype-localize key="addFieldset">Add an item</archetype-localize>
         </a>
@@ -129,7 +129,7 @@
     </ul>
 
     <div ng-show="canAdd() && model.config.addButtonPlacement === 'bottom'">
-        <a class="archetypeAddButton" ng-click="openFieldsetPicker(0, $event)" prevent-default>
+        <a class="archetypeAddButton" ng-click="openFieldsetPicker(undefined, $event)" prevent-default>
             <i class="icon icon-add"></i>
             <archetype-localize key="addFieldset">Add an item</archetype-localize>
         </a>
