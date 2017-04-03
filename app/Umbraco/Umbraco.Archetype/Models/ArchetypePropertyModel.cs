@@ -45,7 +45,8 @@ namespace Archetype.Models
         {
             var properyType = this.CreateDummyPropertyType();
 
-            var result = properyType.ConvertDataToSource(Value, false);
+            var source = properyType.ConvertDataToSource(Value, false);
+            var result = properyType.ConvertSourceToObject(source, false);
             if (result is T)
                 return (T) result;
             else

@@ -34,7 +34,7 @@ namespace Archetype.Extensions
             if (!PropertyValueConvertersResolver.HasCurrent)
                 return null;
 
-            return (PublishedPropertyType)UmbracoContext.Current.Application.ApplicationCache.RequestCache.GetCacheItem("AT_" + prop.HostContentType?.Alias + "_" + prop.Alias, () =>
+            return (PublishedPropertyType)UmbracoContext.Current.Application.ApplicationCache.RequestCache.GetCacheItem("AT_" + prop.DataTypeId, () =>
                 new PublishedPropertyType(prop.HostContentType, new PropertyType(new DataTypeDefinition(-1, prop.PropertyEditorAlias) { Id = prop.DataTypeId })));
         }
     }
