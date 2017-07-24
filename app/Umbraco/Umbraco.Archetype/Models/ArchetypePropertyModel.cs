@@ -49,6 +49,10 @@ namespace Archetype.Models
             var result = properyType.ConvertSourceToObject(source, false);
             if (result is T)
                 return (T) result;
+
+            var convert = result.TryConvertTo<T>();
+            if (convert.Success)
+                return convert.Result;
             else
                 return default(T);
 

@@ -1,7 +1,8 @@
-﻿using System;
-using System.Linq;
-using Archetype.Models;
+﻿using Archetype.Models;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Umbraco.Core;
 using Umbraco.Core.Logging;
 using Umbraco.Core.Models;
@@ -190,6 +191,9 @@ namespace Archetype.Extensions
                             propertyInst.HostContentType = hostContentType;
                         }
                     }
+
+                    // cleanup properties, which were removed from prevalue config
+                    ((List<ArchetypePropertyModel>) fieldsetInst.Properties).RemoveAll(p => p.DataTypeId == 0);
                 }
             }
         }
