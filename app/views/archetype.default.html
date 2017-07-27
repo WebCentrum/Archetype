@@ -1,4 +1,4 @@
-{{VERSION_HTML}}
+<!-- Version 1.13.1 -->
 <div class="archetypeEditor ng-class:model.config.customCssClass">
     <!-- Fieldset picker. -->
     <div class="usky-grid fieldsetPicker" ng-class="{withGroups: overlayMenu.fieldsetGroups.length > 1}" ng-if="overlayMenu.show">
@@ -27,7 +27,7 @@
     <textarea class="archetypeDeveloperModel" ng-show="model.config.developerMode" ng-model="model.value"></textarea>
 
     <div ng-show="canAdd() && model.config.addButtonPlacement === 'top'">
-        <a class="archetypeAddButton" ng-click="openFieldsetPicker(undefined, $event)" prevent-default>
+        <a class="btn" ng-click="openFieldsetPicker(undefined, $event)" prevent-default>
             <i class="icon icon-add"></i>
             <archetype-localize key="addFieldset">Add an item</archetype-localize>
         </a>
@@ -129,7 +129,7 @@
     </ul>
 
     <div ng-show="canAdd() && model.config.addButtonPlacement === 'bottom'">
-        <a class="archetypeAddButton" ng-click="openFieldsetPicker(undefined, $event)" prevent-default>
+        <a class="btn" ng-click="openFieldsetPicker(undefined, $event)" prevent-default>
             <i class="icon icon-add"></i>
             <archetype-localize key="addFieldset">Add an item</archetype-localize>
         </a>
