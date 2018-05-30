@@ -254,7 +254,7 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
 
         disabled: $scope.model.config.sortFunction !== undefined,
     //handles a fieldset add
-    $scope.openFieldsetPicker = function ($index, event) {
+    $scope.openFieldsetPicker = function ($index, event, bottomButtonPressed) {
         if ($scope.canAdd() == false) {
             return;
         }
@@ -273,6 +273,12 @@ angular.module("umbraco").controller("Imulus.ArchetypeController", function ($sc
         if (allFieldsets == 0) {
             return;
         }
+
+        // put fieldset above or below depending on which button the user clicked
+        if ($scope.model.config.addButtonPlacement === 'both') {
+            $index = bottomButtonPressed ? $scope.model.value.fieldsets.length : -1;
+        }
+
         if (allFieldsets.length == 1) {
             // only one fieldset type - no need to display the picker
             $scope.addRow(allFieldsets[0].alias, $index);

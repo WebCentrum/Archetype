@@ -2,6 +2,7 @@ angular.module('umbraco').controller('ArchetypeConfigOptionsController', functio
     $scope.addButtonPlacements = [
         { alias: 'top', label: 'Above fieldsets' },
         { alias: 'bottom', label: 'Below fieldsets' },
+        { alias: 'both', label: 'Above and below fieldsets' },
         { alias: 'item', label: 'Per each fieldset' }
     ];
 

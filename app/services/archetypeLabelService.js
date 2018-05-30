@@ -208,7 +208,7 @@ angular.module('umbraco.services').factory('archetypeLabelService', function (ar
                     
                     //test for function
                     var beginParamsIndexOf = template.indexOf("(");
-                    var endParamsIndexOf = template.indexOf(")");
+                    var endParamsIndexOf = template.lastIndexOf(")");
 
                     //if passed a function
                     if(beginParamsIndexOf != -1 && endParamsIndexOf != -1)
