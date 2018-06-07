@@ -26,7 +26,7 @@
 
     <textarea class="archetypeDeveloperModel" ng-show="model.config.developerMode" ng-model="model.value"></textarea>
 
-    <div ng-show="canAdd() && (model.config.addButtonPlacement === 'top' || model.config.addButtonPlacement === 'both')">
+    <div ng-show="canAdd() && (model.config.addButtonPlacement === 'top' || model.config.addButtonPlacement === 'both' && model.value.fieldsets.length > 0)">
         <a class="btn" ng-click="openFieldsetPicker(undefined, $event)" prevent-default>
             <i class="icon icon-add"></i>
             <archetype-localize key="addFieldset">Add an item</archetype-localize>
